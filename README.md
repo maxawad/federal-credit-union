@@ -1,46 +1,68 @@
-# Hugo template for Netlify CMS with Netlify Identity
+# Federal Credit Union website
 
-This is a small business template built with [Victor Hugo](https://github.com/netlify/victor-hugo) and [Netlify CMS](https://github.com/netlify/netlify-cms), designed and developed by [Darin Dimitroff](http://www.darindimitroff.com/), [spacefarm.digital](https://www.spacefarm.digital).
+A small-business website for a (fictional) credit union, built as a static site with Hugo and styled with Tachyons and PostCSS. Visitors can read the home page, products, values, contact and blog pages. Site owners can edit the content in a browser through Netlify CMS.
 
-## Getting started
+The project started from the open source Netlify template "one-click-hugo-cms" (see Credits). The text and images in `site/content` are placeholder sample content from that template (a coffee business), so the site is a working starting point rather than a finished credit union site.
 
-Use our deploy button to get your own copy of the repository. 
+## What it does
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify-templates/one-click-hugo-cms&stack=cms)
+* Generates a fast, fully static multi-page site: home, products, values, contact, blog posts and a 404 page.
+* Small reusable layout partials (jumbotron, media blocks, tables, image grids, forms) in `site/layouts/partials`, fed by Hugo `dict` data.
+* A content editor at `/admin` powered by Netlify CMS with live preview templates (React). Saving content commits to the Git repository through Netlify Identity and Git Gateway.
+* CSS pipeline with Sass, PostCSS (preset-env, import, cssnano) and a custom Tachyons fork. Variables live in `src/css/imports/_variables.css`.
 
-This will setup everything needed for running the CMS:
+## Tech stack
 
-* A new repository in your GitHub account with the code
-* Full Continuous Deployment to Netlify's global CDN network
-* Control users and access with Netlify Identity
-* Manage content with Netlify CMS
+* Hugo (static site generator; the repository bundles Hugo binaries in `bin/`, and `hugo-bin` installs Hugo through npm)
+* Webpack 4, Babel, Sass, PostCSS
+* Netlify CMS (React 16) for editing, Netlify for hosting
+* Node.js (version in `.nvmrc`) and Yarn
 
-Once the initial build finishes, you can invite yourself as a user. Go to the Identity tab in your new site, click "Invite" and send yourself an invite.
+## Run it locally
 
-Now you're all set, and you can start editing content!
-
-## Local Development
-
-Clone this repository, and run `yarn` or `npm install` from the new folder to install all required dependencies.
-
-Then start the development server with `yarn start` or `npm start`.
-
-## Layouts
-
-The template is based on small, content-agnostic partials that can be mixed and matched. The pre-built pages showcase just a few of the possible combinations. Refer to the `site/layouts/partials` folder for all available partials.
-
-Use Hugo’s `dict` functionality to feed content into partials and avoid repeating yourself and creating discrepancies.
-
-## CSS
-
-The template uses a custom fork of Tachyons and PostCSS with cssnext and cssnano. To customize the template for your brand, refer to `src/css/imports/_variables.css` where most of the important global variables like colors and spacing are stored.
-
-## SVG
-
-All SVG icons stored in `site/static/img/icons` are automatically optimized with SVGO (gulp-svgmin) and concatenated into a single SVG sprite stored as a a partial called `svg.html`. Make sure you use consistent icons in terms of viewport and art direction for optimal results. Refer to an SVG via the `<use>` tag like so:
+You need Node.js (see `.nvmrc`) and Yarn or npm.
 
 ```
-<svg width="16px" height="16px" class="db">
-  <use xlink:href="#SVG-ID"></use>
-</svg>
+yarn            # or: npm install
+yarn start      # Hugo plus webpack dev server with live reload
 ```
+
+Open the address printed by the dev server (the dev server defaults to http://localhost:3000, see `webpack.dev.js`).
+
+## Build a static copy (for a live demo)
+
+```
+yarn build      # or: npm run build
+```
+
+This runs webpack first (it writes the hashed CSS and JS file names to `site/data/webpack.json`) and then Hugo. The finished static site is in `dist/`. No secrets or API keys are needed to build. Serve it with any static file host, for example:
+
+```
+cd dist && python3 -m http.server 8000
+```
+
+To include draft and future dated posts, use `yarn build:preview`.
+
+The `/admin` content editor only works when the site is deployed on Netlify with Identity and Git Gateway enabled. The public pages work anywhere.
+
+Note: the Hugo templates read `site/data/webpack.json`, so running Hugo alone (for example `bin/hugo.linux -d dist -s site`) produces HTML without the stylesheet and script links. Run the webpack step first.
+
+## Deploy
+
+`netlify.toml` already holds the Netlify build settings (`yarn build`, publish `dist`). You can use the Deploy to Netlify button from the upstream template to get your own copy.
+
+## Project layout
+
+* `site/content` pages and blog posts (Markdown)
+* `site/layouts` Hugo templates and partials
+* `site/static` images, icons and the CMS config (`admin/config.yml`)
+* `src` CSS, fonts and JavaScript (including the CMS preview templates)
+* `webpack.*.js` build configuration
+
+## Status
+
+Working template, with placeholder content. The dependencies are from 2019 to early 2020 (for example `node-sass` 4 and webpack 4), so a modern Node.js version may fail to install them. Use the Node version in `.nvmrc`. The contact and newsletter forms have no form handler configured, so they do not send anything yet.
+
+## Credits
+
+Based on [one-click-hugo-cms](https://github.com/netlify-templates/one-click-hugo-cms) by Netlify, which is built on [Victor Hugo](https://github.com/netlify/victor-hugo). Template designed and developed by [Darin Dimitroff](http://www.darindimitroff.com/) of [spacefarm.digital](https://www.spacefarm.digital). Released under the MIT license (see `LICENSE`).
